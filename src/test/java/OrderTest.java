@@ -1,49 +1,61 @@
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import page.MainPage;
-import data.TestData;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import java.time.Duration;
 
+@RunWith(Parameterized.class)
 public class OrderTest extends BaseTest {
+    private final String name;
+    private final String surname;
+    private final String address;
+    private final String metroStation;
+    private final String phone;
+    private final String date;
+    private final String period;
+    private final String color;
+    private final String comment;
 
 
-    @Before
-    public void setUp() {
-        startBrowser("firefox"); // или "firefox" или "chrome"
-        driver.get("https://qa-scooter.praktikum-services.ru/");
-        mainPage = new MainPage(driver, wait);
-        mainPage.acceptCookies();
+    public OrderTest(String browser, String name, String surname, String address, String metroStation, String phone, String date, String period, String color, String comment) {
+        super(browser);
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.metroStation = metroStation;
+        this.phone = phone;
+        this.date = date;
+        this.period = period;
+        this.color = color;
+        this.comment = comment;
     }
+
+    @Parameterized.Parameters(name = "{0}: {1} {2} {3} {4} {5} {6} {7} {8}")
+    public static Object[][] getDate() {
+        return new Object[][] {
+                {"chrome", "Иван", "Петров", "ул. Ленина, 15", "Тверская", "+79991234567", "20.02.2026", "трое суток", "black", "Оставьте у двери"},
+                {"chrome", "Мария", "Сидорова", "пр. Мира, 20", "Комсомольская", "+79119876543", "21.02.2026", "пятеро суток", "grey", "Позвоните за час"},
+                {"firefox", "Иван", "Петров", "ул. Ленина, 15", "Тверская", "+79991234567", "20.02.2026", "трое суток", "black", "Оставьте у двери"},
+                {"firefox", "Мария", "Сидорова", "пр. Мира, 20", "Комсомольская", "+79119876543", "21.02.2026", "пятеро суток", "grey", "Позвоните за час"}
+        };
+    }
+
 
     @Test
     public void testOrderFlowOrderButtonHeader() {
+        mainPage.acceptCookies();
         // Кликнуть на кнопку «Заказать» на главной странице
         mainPage.clickOrderButtonHeader();
 
         // Заполнить форму «Для кого самокат»
-        String[] personData = TestData.PERSON_DATA_SET_1[0];
-        orderPage.fillName(personData[0]);
-        orderPage.fillSurname(personData[1]);
-        orderPage.fillAddress(personData[2]);
-        orderPage.fillMetro(personData[3]);
-        orderPage.fillPhone(personData[4]);
+        // Заполнить форму «Для кого самокат»
+        orderPage.personData(name, surname, address, metroStation, phone);
 
         // Кликнуть на кнопку «Далее»
         orderPage.clickNextButton();
 
         // Заполнить форму «Про аренду»
-        String[] rentalData = TestData.RENTAL_DATA_SET_1;
-        orderPageSteps.fillRentalDate(rentalData[0]);// Дата доставки
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.selectRentalPeriod(rentalData[1]);// Срок аренды
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.selectScooterColor(rentalData[2]);// Цвет самоката
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.fillComment(rentalData[3]);// Комментарий для курьера
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        orderPageSteps.rentalData(date, period, color, comment);
 
         // Кликнуть по кнопке «Заказать» в блоке «Про аренду»
         orderPageSteps.clickOrderInRentalForm();
@@ -62,6 +74,7 @@ public class OrderTest extends BaseTest {
 
     @Test
     public void testOrderFlowButtonOrderMiddle() {
+        mainPage.acceptCookies();
         // Прокрутка до кнопки "Заказать" в середине сайта
         mainPage.scrollToButtonOrderMiddle();
 
@@ -69,26 +82,13 @@ public class OrderTest extends BaseTest {
         mainPage.clickButtonOrderMiddle();
 
         // Заполнить форму «Для кого самокат»
-        String[] personData = TestData.PERSON_DATA_SET_2[0];
-        orderPage.fillName(personData[0]);
-        orderPage.fillSurname(personData[1]);
-        orderPage.fillAddress(personData[2]);
-        orderPage.fillMetro(personData[3]);
-        orderPage.fillPhone(personData[4]);
+        orderPage.personData(name, surname, address, metroStation, phone);
 
         // Кликнуть на кнопку «Далее»
         orderPage.clickNextButton();
 
         // Заполнить форму «Про аренду»
-        String[] rentalData = TestData.RENTAL_DATA_SET_2;
-        orderPageSteps.fillRentalDate(rentalData[0]);// Дата доставки
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.selectRentalPeriod(rentalData[1]);// Срок аренды
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.selectScooterColor(rentalData[2]);// Цвет самоката
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        orderPageSteps.fillComment(rentalData[3]);// Комментарий для курьера
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        orderPageSteps.rentalData(date, period, color, comment);
 
         // Кликнуть по кнопке «Заказать» в блоке «Про аренду»
         orderPageSteps.clickOrderInRentalForm();
@@ -104,7 +104,5 @@ public class OrderTest extends BaseTest {
         boolean isOrderPlacedDisplayed = orderPageSteps.isOrderPlacedModalDisplayed();
         Assert.assertTrue("Всплывающее окно 'Заказ оформлен' не появилось", isOrderPlacedDisplayed);
     }
-
-
 
 }

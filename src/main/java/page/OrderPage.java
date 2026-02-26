@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OrderPage  {
-    private final WebDriver driver;
+    protected WebDriver driver;
     private final WebDriverWait wait;
 
 
@@ -77,6 +77,15 @@ public class OrderPage  {
     public void clickNextButton() {
         WebElement nextBtn = wait.until(ExpectedConditions.elementToBeClickable(nextButton));
         nextBtn.click();
+    }
+
+    public void personData(String name, String surname, String address, String metroStation, String phone) {
+        fillName(name);
+        fillSurname(surname);
+        fillAddress(address);
+        fillMetro(metroStation);
+        fillPhone(phone);
+
     }
 }
 

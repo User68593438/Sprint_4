@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OrderPageSteps {
-    private final WebDriver driver;
+    protected WebDriver driver;
     private final WebDriverWait wait;
 
 
@@ -78,6 +78,13 @@ public class OrderPageSteps {
         WebElement commentInput = wait.until(ExpectedConditions.elementToBeClickable(massageForCourier));
         commentInput.clear();
         commentInput.sendKeys(comment);
+    }
+
+    public void rentalData(String date, String period, String color, String comment) {
+        fillRentalDate(date);
+        selectRentalPeriod(period);
+        selectScooterColor(color);
+        fillComment(comment);
     }
 
     // Метод кликнуть по кнопке Заказать в форме Про аренду clickOrderInRentalForm

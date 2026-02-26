@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 
 public class MainPage {
     private final WebDriver driver;
@@ -69,24 +71,24 @@ public class MainPage {
     }
 
     // Метод клика по вопросу
-    public void clickQuestion(By questionLocator) {
-        WebElement questionButton = wait.until(
-                ExpectedConditions.elementToBeClickable(questionLocator)
-        );
-        questionButton.click();
+    public void clickQuestion(int index) {
+        WebElement questionElement = driver.findElement(faqSection);
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", questionElement);
+
+        By question = By.id("accordion__heading-" + index);
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.elementToBeClickable(question));
+        driver.findElement(question).click();
     }
 
-    // Метод получения ответа на вопрос
-    public String getAnswerText(By answerLocator) {
-        WebElement answerElement = wait.until
-                (ExpectedConditions.visibilityOfElementLocated(answerLocator)
-                );
-        return answerElement.getText().trim();
+
+    // Метод получения ответа
+    public String getAnswerText(int index) {
+        By answerElement = By.id("accordion__panel-" + index);
+        new WebDriverWait(driver, Duration.ofSeconds(15)).until(ExpectedConditions.visibilityOfElementLocated(answerElement));
+        return driver.findElement(answerElement).getText();
+
     }
 
-    public By getAnswerLocatorFromQuestion(By questionLocator) {
-        String answerId = questionLocator.toString().replace("accordion__heading", "accordion__panel");
-        return By.id(answerId.split(" ")[1]);
-    }
 }
 

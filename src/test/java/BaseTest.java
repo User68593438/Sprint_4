@@ -1,5 +1,6 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
+import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -16,8 +17,14 @@ public class BaseTest {
     protected MainPage mainPage;
     protected OrderPage orderPage;
     protected OrderPageSteps orderPageSteps;
+    protected String browser;
 
+    // Константа URL
+    protected  static final String BASE_URL = "https://qa-scooter.praktikum-services.ru/";
 
+    public BaseTest(String browser) {
+        this.browser = browser;
+    }
 
     public void startBrowser(String browser) {
         if (browser.equals("chrome")) {
@@ -25,11 +32,22 @@ public class BaseTest {
         } else if (browser.equals("firefox")) {
             startBrowserFirefox();
         }
+
+        driver.get(BASE_URL);
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         mainPage = new MainPage(driver, wait);
         orderPage = new OrderPage(driver, wait);
         orderPageSteps = new OrderPageSteps(driver, wait);
+
     }
+
+    @Before
+    public void startBrowser() {
+        startBrowser(browser);
+        driver.get(BASE_URL);
+        mainPage = new MainPage(driver, wait);
+    }
+
 
     private void startBrowserFirefox() {
         WebDriverManager.firefoxdriver().setup();
